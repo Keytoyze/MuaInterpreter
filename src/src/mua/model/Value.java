@@ -1,37 +1,59 @@
 package src.mua.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import src.mua.Interpreter;
+import src.mua.parser.FirstWordParser;
+import src.mua.parser.IParser;
+import src.mua.parser.ListParser;
 import src.mua.util.StringUtils;
 
 public class Value implements Comparable<Value> {
 
-    public static final Value VOID = new Value("");
+    public enum ValueType {WORD, NUMBER, BOOL, LIST}
+
+    public static final Value VOID = new Value("", ValueType.WORD);
     public static final BiFunction<Context, String, Value> CONTEXT_STRING_MAPPER = (context, s) -> Value.of(s);
 
     private String raw;
+    private ValueType type;
 
-    private Value(String raw) {
+    private Value(String raw, ValueType type) {
         this.raw = raw.trim();
+        this.type = type;
     }
 
     public static Value of(Boolean value) {
-        return new Value(value.toString());
+        return new Value(value.toString(), ValueType.BOOL);
     }
 
     public static Value of(Double value) {
-        return new Value(value.toString());
+        return new Value(value.toString(), ValueType.NUMBER);
     }
 
     public static Value of(String value) {
-        return new Value(value);
+        return new Value(value, ValueType.WORD);
+    }
+
+    public static Value of(String value, ValueType type) {
+        return new Value(value, type);
     }
 
     @Override
     public String toString() {
+        if (isList()) {
+            StringBuilder sb = new StringBuilder("[");
+            List<Value> valueList = toList();
+            for (Value v : valueList) {
+                sb.append(v).append(" ");
+            }
+            return sb.replace(sb.length() - 1, sb.length(), "]").toString();
+        }
         return raw;
     }
 
@@ -39,22 +61,41 @@ public class Value implements Comparable<Value> {
         return Double.valueOf(raw);
     }
 
+    public String toUnpackListString() {
+        if (isList()) {
+            return raw.substring(1, raw.length() - 1);
+        }
+        throw new IllegalStateException(raw + " is not a list!");
+    }
+
     public boolean isNumber() {
         return StringUtils.test(StringUtils.REGEX_DOUBLE_START, raw);
     }
 
     public List<Value> toList() {
-        if (isList()) {
-            return Stream.of(raw.substring(1, raw.length() - 1)
-                    .split("\\s+"))
-                    .map(Value::of)
-                    .collect(Collectors.toList());
+        Statement s = new Statement(toUnpackListString());
+        List<Value> result = new ArrayList<>();
+        IParser firstWordParser = new FirstWordParser(), listParser = ListParser.INSTANCE;
+        while (true) {
+            Value value = listParser.parse(null, s);
+            if (value == null) {
+                // Parse first word
+                value = firstWordParser.parse(null, s);
+                if (value == null) {
+                    // end
+                    return result;
+                }
+            }
+            result.add(value);
         }
-        throw new IllegalStateException(raw + " is not a list!");
     }
 
     public boolean isList() {
         return StringUtils.test(StringUtils.REGEX_LIST_START, raw);
+    }
+
+    public boolean isFunction() {
+        return StringUtils.test(StringUtils.REGEX_FUNCTION, raw);
     }
 
     public Boolean toBool() {
@@ -78,7 +119,7 @@ public class Value implements Comparable<Value> {
         if (obj == this) return true;
         if (!(obj instanceof Value)) return false;
 
-        Value other = (Value)obj;
+        Value other = (Value) obj;
         if (isNumber() && other.isNumber()) {
             return other.toNumber().equals(toNumber());
         }

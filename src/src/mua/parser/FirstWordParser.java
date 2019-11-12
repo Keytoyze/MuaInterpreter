@@ -12,8 +12,12 @@ public class FirstWordParser implements IParser {
     private final BiPredicate<Context, String> predicate;
     private final BiFunction<Context, String, Value> valueMapper;
 
+    public FirstWordParser() {
+        this((context, s) -> !s.isEmpty());
+    }
+
     public FirstWordParser(BiPredicate<Context, String> predicate) {
-        this(predicate, Value.CONTEXT_STRING_MAPPER);
+        this(predicate, (context, s) -> Value.of(s));
     }
 
     public FirstWordParser(

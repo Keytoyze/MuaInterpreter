@@ -19,7 +19,9 @@ public enum Operation {
     LT(2),
     AND(2),
     OR(2),
-    NOT(1);
+    NOT(1),
+    READLIST(0),
+    REPEAT(2);
 
     public String word;
     public int argNum;

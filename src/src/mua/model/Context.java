@@ -37,4 +37,12 @@ public class Context {
         return Value.of(Main.SCANNER.next());
     }
 
+    public Value inputLineAsList() {
+        return Value.of("[" + Main.SCANNER.nextLine() + "]", Value.ValueType.LIST);
+    }
+
+    public String inputLine() {
+        return Main.SCANNER.nextLine();
+    }
+
 }

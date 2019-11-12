@@ -20,6 +20,10 @@ public class Statement {
         return content;
     }
 
+    public void append(String s) {
+        content.append(s);
+    }
+
     // StringBuilder has no method to do self-trim(). So we make one.
     public void trim() {
         int start = 0, end = content.length() - 1;
@@ -57,8 +61,10 @@ public class Statement {
         return null;
     }
 
-    public void consume(int length) {
+    public String consume(int length) {
+        String s = content.substring(0, length);
         content.delete(0, length);
+        return s;
     }
 
     public boolean isEmpty() {
