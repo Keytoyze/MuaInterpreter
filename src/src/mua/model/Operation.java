@@ -25,6 +25,7 @@ public enum Operation {
     OUTPUT(1),
     STOP(0),
     EXPORT(0),
+    IF(3),
     ISNUMBER(1),
     ISWORD(1),
     ISLIST(1),

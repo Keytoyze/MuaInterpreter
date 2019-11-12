@@ -31,7 +31,6 @@ public class FunctionParser implements IParser {
             Value argument = Parser.INSTANCE.parse(context, current);
             localContext.set(parameter, argument);
         }
-        // TODO: multi-sentence
         try {
             function.run(localContext);
         } catch (StopException ignore) {

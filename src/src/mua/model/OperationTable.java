@@ -51,6 +51,13 @@ public interface OperationTable {
             })
             .addVoidOperation(Operation.EXPORT, (context, args) -> Interpreter.GLOBAL_CONTEXT.mergeWith(context))
             // Bool
+            .addVoidOperation(Operation.IF, (context, args) -> {
+                if (args[0].toBool()) {
+                    args[1].run(context);
+                } else {
+                    args[2].run(context);
+                }
+            })
             .addOperation(Operation.ISNUMBER, (context, args) -> Value.of(args[0].isNumber()))
             .addOperation(Operation.ISWORD, (context, args) -> Value.of(args[0].isWord()))
             .addOperation(Operation.ISLIST, (context, args) -> Value.of(args[0].isList()))
