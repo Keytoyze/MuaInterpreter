@@ -8,7 +8,7 @@ import src.mua.parser.Parser;
 
 public class Interpreter {
 
-    public static final Context GLOBAL_CONTEXT = new Context();
+    public static final Context GLOBAL_CONTEXT = new Context(null);
 
     public static String doInterprete(String sentence) {
         return doInterprete(sentence, GLOBAL_CONTEXT);

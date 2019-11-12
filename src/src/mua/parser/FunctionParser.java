@@ -26,7 +26,7 @@ public class FunctionParser implements IParser {
         List<Value> functionList = context.get(Value.of(functionName)).toList();
         List<Value> parameters = functionList.get(0).toList();
         Value function = functionList.get(1);
-        Context localContext = new Context();
+        Context localContext = new Context(context);
         for (Value parameter : parameters) {
             Value argument = Parser.INSTANCE.parse(context, current);
             localContext.set(parameter, argument);

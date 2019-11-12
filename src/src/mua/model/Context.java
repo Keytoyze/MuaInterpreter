@@ -1,7 +1,7 @@
 package src.mua.model;
 
-import java.lang.IllegalArgumentException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import src.mua.Main;
 
@@ -9,13 +9,21 @@ public class Context {
 
     private final HashMap<Value, Value> variables = new HashMap<>();
     private Value returnValule = Value.VOID;
+    private Context parent;
+
+    public Context(Context parent) {
+        this.parent = parent;
+    }
 
     public Value get(Value key) {
         Value v = variables.get(key);
-        if (v == null) {
+        if (v != null) {
+            return v;
+        }
+        if (parent == null) {
             throw new IllegalArgumentException(v + " is not a variable!");
         }
-        return v;
+        return parent.get(key);
     }
 
     public void set(Value key, Value value) {
