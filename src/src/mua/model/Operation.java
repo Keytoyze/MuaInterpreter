@@ -21,7 +21,17 @@ public enum Operation {
     OR(2),
     NOT(1),
     READLIST(0),
-    REPEAT(2);
+    REPEAT(2),
+    OUTPUT(1),
+    STOP(0),
+    EXPORT(0),
+    ISNUMBER(1),
+    ISWORD(1),
+    ISLIST(1),
+    ISBOOL(1),
+    ISEMPTY(1),
+
+    POALL(0);
 
     public String word;
     public int argNum;

@@ -19,7 +19,10 @@ public class Interpreter {
         if (statement.isEmpty()) {
             return "";
         }
-        Value value = Parser.INSTANCE.parse(context, statement);
+        Value value = null;
+        while (!statement.isEmpty()) {
+            value = Parser.INSTANCE.parse(context, statement);
+        }
         if (value == null) {
             throw new IllegalArgumentException("Cannot interprete the input: " + sentence);
         }

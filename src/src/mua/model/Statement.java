@@ -68,7 +68,7 @@ public class Statement {
     }
 
     public boolean isEmpty() {
-        return content.length() == 0;
+        return content.toString().trim().length() == 0;
     }
 
     @Override

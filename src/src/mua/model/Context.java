@@ -8,6 +8,7 @@ import src.mua.Main;
 public class Context {
 
     private final HashMap<Value, Value> variables = new HashMap<>();
+    private Value returnValule = Value.VOID;
 
     public Value get(Value key) {
         Value v = variables.get(key);
@@ -45,4 +46,21 @@ public class Context {
         return Main.SCANNER.nextLine();
     }
 
+    public void setReturnValule(Value value) {
+        this.returnValule = value;
+    }
+
+    public Value getReturnValule() {
+        return returnValule;
+    }
+
+    public void poAll() {
+        System.out.println(variables.keySet());
+    }
+
+    public void mergeWith(Context another) {
+        for (Map.Entry<Value, Value> entry : another.variables.entrySet()) {
+            variables.put(entry.getKey(), entry.getValue());
+        }
+    }
 }

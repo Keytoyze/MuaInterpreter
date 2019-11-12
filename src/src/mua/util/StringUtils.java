@@ -1,9 +1,11 @@
 package src.mua.util;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import src.mua.model.Operation;
+import src.mua.model.Value;
 
 public class StringUtils {
 
@@ -27,5 +29,14 @@ public class StringUtils {
             return null;
         }
         return text.subSequence(matcher.start(), matcher.end());
+    }
+
+    public static String listToString(List<Value> valueList) {
+        StringBuilder sb = new StringBuilder("[");
+        for (Value v : valueList) {
+            sb.append(v).append(" ");
+        }
+        return sb.replace(sb.length() - 1, sb.length(), "]").toString();
+
     }
 }

@@ -1,10 +1,11 @@
-package src.mua.parser;
+package src.mua.model;
 
 import java.util.Collection;
 
 import src.mua.Interpreter;
-import src.mua.model.Operation;
-import src.mua.model.Value;
+import src.mua.parser.FunctionParser;
+import src.mua.parser.IParser;
+import src.mua.parser.ListParser;
 import src.mua.util.ParserTableBuilder;
 import src.mua.util.StringUtils;
 
@@ -38,11 +39,24 @@ public interface OperationTable {
             .addOperation(Operation.NOT, (context, args) -> Value.of(!args[0].toBool()))
             // List operation
             .addOperation(Operation.READLIST, (context, args) -> context.inputLineAsList())
-            .addVoidOperation(Operation.REPEAT, (context, values) -> {
-                int count = values[0].toNumber().intValue();
-                String code = values[1].toUnpackListString();
-                for (int i = 0; i < count; i++) Interpreter.doInterprete(code, context);
+            .addVoidOperation(Operation.REPEAT, (context, args) -> {
+                int count = args[0].toNumber().intValue();
+                for (int i = 0; i < count; i++) args[1].run(context);
             })
             // Function operation
+            .add(FunctionParser.INSTANCE)
+            .addVoidOperation(Operation.OUTPUT, (context, args) -> context.setReturnValule(args[0]))
+            .addVoidOperation(Operation.STOP, (context, args) -> {
+                throw new StopException();
+            })
+            .addVoidOperation(Operation.EXPORT, (context, args) -> Interpreter.GLOBAL_CONTEXT.mergeWith(context))
+            // Bool
+            .addOperation(Operation.ISNUMBER, (context, args) -> Value.of(args[0].isNumber()))
+            .addOperation(Operation.ISWORD, (context, args) -> Value.of(args[0].isWord()))
+            .addOperation(Operation.ISLIST, (context, args) -> Value.of(args[0].isList()))
+            .addOperation(Operation.ISBOOL, (context, args) -> Value.of(args[0].isBool()))
+            .addOperation(Operation.ISEMPTY, (context, args) -> Value.of(args[0].isEmpty()))
+            // other operations
+            .addVoidOperation(Operation.POALL, (context, args) -> context.poAll())
             .build();
 }

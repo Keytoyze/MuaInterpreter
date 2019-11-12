@@ -3,6 +3,7 @@ package src.mua.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import src.mua.Interpreter;
 import src.mua.parser.FirstWordParser;
 import src.mua.parser.IParser;
 import src.mua.parser.ListParser;
+import src.mua.parser.Parser;
 import src.mua.util.StringUtils;
 
 public class Value implements Comparable<Value> {
@@ -26,6 +28,9 @@ public class Value implements Comparable<Value> {
     private Value(String raw, ValueType type) {
         this.raw = raw.trim();
         this.type = type;
+        if (isList()) {
+            this.raw = StringUtils.listToString(toList());
+        }
     }
 
     public static Value of(Boolean value) {
@@ -46,14 +51,6 @@ public class Value implements Comparable<Value> {
 
     @Override
     public String toString() {
-        if (isList()) {
-            StringBuilder sb = new StringBuilder("[");
-            List<Value> valueList = toList();
-            for (Value v : valueList) {
-                sb.append(v).append(" ");
-            }
-            return sb.replace(sb.length() - 1, sb.length(), "]").toString();
-        }
         return raw;
     }
 
@@ -70,6 +67,10 @@ public class Value implements Comparable<Value> {
 
     public boolean isNumber() {
         return StringUtils.test(StringUtils.REGEX_DOUBLE_START, raw);
+    }
+
+    public boolean isWord() {
+        return !isList();
     }
 
     public List<Value> toList() {
@@ -107,6 +108,18 @@ public class Value implements Comparable<Value> {
 
     public boolean isBool() {
         return StringUtils.test(StringUtils.REGEX_BOOL_START, raw);
+    }
+
+    public boolean isEmpty() {
+        if (isList()) {
+            return toList().size() == 0;
+        } else {
+            return raw.isEmpty();
+        }
+    }
+
+    public void run(Context context) {
+        Interpreter.doInterprete(toUnpackListString(), context);
     }
 
     @Override
