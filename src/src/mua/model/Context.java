@@ -8,7 +8,8 @@ import src.mua.Main;
 public class Context {
 
     private final HashMap<Value, Value> variables = new HashMap<>();
-    private Value returnValule = Value.VOID;
+    private Value returnValue = Value.VOID;
+    private Value backupReturnValue = Value.VOID;
     private Context parent;
 
     public Context(Context parent) {
@@ -21,7 +22,7 @@ public class Context {
             return v;
         }
         if (parent == null) {
-            throw new IllegalArgumentException(v + " is not a variable!");
+            throw new IllegalArgumentException(key + " is not a variable!");
         }
         return parent.get(key);
     }
@@ -31,7 +32,7 @@ public class Context {
     }
 
     public boolean contains(Value key) {
-        return variables.containsKey(key);
+        return variables.containsKey(key) || (parent != null && parent.contains(key));
     }
 
     public void remove(Value key) {
@@ -54,12 +55,16 @@ public class Context {
         return Main.SCANNER.nextLine();
     }
 
-    public void setReturnValule(Value value) {
-        this.returnValule = value;
+    public void setReturnValule(Value value, boolean force) {
+        if (force) {
+            this.returnValue = value;
+        } else {
+            this.backupReturnValue = value;
+        }
     }
 
-    public Value getReturnValule() {
-        return returnValule;
+    public Value getReturnValue() {
+        return returnValue != Value.VOID ? returnValue : backupReturnValue;
     }
 
     public void poAll() {

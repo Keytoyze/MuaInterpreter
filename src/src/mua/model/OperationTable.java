@@ -45,17 +45,17 @@ public interface OperationTable {
             })
             // Function operation
             .add(FunctionParser.INSTANCE)
-            .addVoidOperation(Operation.OUTPUT, (context, args) -> context.setReturnValule(args[0]))
+            .addVoidOperation(Operation.OUTPUT, (context, args) -> context.setReturnValule(args[0], true))
             .addVoidOperation(Operation.STOP, (context, args) -> {
                 throw new StopException();
             })
             .addVoidOperation(Operation.EXPORT, (context, args) -> Interpreter.GLOBAL_CONTEXT.mergeWith(context))
             // Bool
-            .addVoidOperation(Operation.IF, (context, args) -> {
+            .addOperation(Operation.IF, (context, args) -> {
                 if (args[0].toBool()) {
-                    args[1].run(context);
+                    return args[1].run(context);
                 } else {
-                    args[2].run(context);
+                    return args[2].run(context);
                 }
             })
             .addOperation(Operation.ISNUMBER, (context, args) -> Value.of(args[0].isNumber()))

@@ -10,7 +10,7 @@ import src.mua.model.Value;
 public class StringUtils {
 
     public static String REGEX_DOUBLE_START = "^-?[0-9]+(\\.[0-9]+)?";
-    public static String REGEX_LIST_START = "^\\[[\\s\\S]+\\]";
+    public static String REGEX_LIST_START = "^\\[[\\s\\S]*\\]";
     public static String REGEX_FUNCTION = "\\[\\s*\\[(.+)\\]\\s*\\[(.+)\\]\\s*\\]";
     public static String REGEX_BOOL_START = "^(true)|(false)+";
     public static String REGEX_WORD_LITERAL = "\\" + Operation.QUOTATION.word + ".+";

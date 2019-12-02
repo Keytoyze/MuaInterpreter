@@ -10,14 +10,14 @@ public class Interpreter {
 
     public static final Context GLOBAL_CONTEXT = new Context(null);
 
-    public static String doInterprete(String sentence) {
+    public static Value doInterprete(String sentence) {
         return doInterprete(sentence, GLOBAL_CONTEXT);
     }
 
-    public static String doInterprete(String sentence, Context context) {
+    public static Value doInterprete(String sentence, Context context) {
         Statement statement = new Statement(sentence);
         if (statement.isEmpty()) {
-            return "";
+            return Value.VOID;
         }
         Value value = null;
         while (!statement.isEmpty()) {
@@ -26,6 +26,6 @@ public class Interpreter {
         if (value == null) {
             throw new IllegalArgumentException("Cannot interprete the input: " + sentence);
         }
-        return value.toString();
+        return value;
     }
 }

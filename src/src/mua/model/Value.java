@@ -118,8 +118,8 @@ public class Value implements Comparable<Value> {
         }
     }
 
-    public void run(Context context) {
-        Interpreter.doInterprete(toUnpackListString(), context);
+    public Value run(Context context) {
+        return Interpreter.doInterprete(toUnpackListString(), context);
     }
 
     @Override

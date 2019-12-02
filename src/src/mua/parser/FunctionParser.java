@@ -35,7 +35,7 @@ public class FunctionParser implements IParser {
             function.run(localContext);
         } catch (StopException ignore) {
         }
-        return localContext.getReturnValule();
+        return localContext.getReturnValue();
     }
 
     @Override

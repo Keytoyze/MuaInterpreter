@@ -23,6 +23,7 @@ public class Parser implements IParser {
                 Value result = IParser.parse(context, current);
 
                 if (result != null) {
+                    context.setReturnValule(result, false);
                     return result;
                 }
             } catch (StopException e) {
