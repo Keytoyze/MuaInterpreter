@@ -49,7 +49,7 @@ public interface OperationTable {
             .addVoidOperation(Operation.STOP, (context, args) -> {
                 throw new StopException();
             })
-            .addVoidOperation(Operation.EXPORT, (context, args) -> Interpreter.GLOBAL_CONTEXT.mergeWith(context))
+            .addVoidOperation(Operation.EXPORT, (context, args) -> Interpreter.GLOBAL_CONTEXT.set(args[0], context.get(args[0])))
             // Bool
             .addOperation(Operation.IF, (context, args) -> {
                 if (args[0].toBool()) {

@@ -8,5 +8,7 @@ public interface IParser {
     Value parse(Context context, Statement current);
 
     // For debug
-    String getId();
+    default String getId() {
+        return getClass().getName();
+    }
 }

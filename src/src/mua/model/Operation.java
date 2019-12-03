@@ -24,7 +24,7 @@ public enum Operation {
     REPEAT(2),
     OUTPUT(1),
     STOP(0),
-    EXPORT(0),
+    EXPORT(1),
     IF(3),
     ISNUMBER(1),
     ISWORD(1),

@@ -36,8 +36,4 @@ public class ListParser implements IParser {
         }
     }
 
-    @Override
-    public String getId() {
-        return "LIST_PARSER";
-    }
 }

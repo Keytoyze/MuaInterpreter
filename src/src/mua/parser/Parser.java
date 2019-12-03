@@ -34,9 +34,4 @@ public class Parser implements IParser {
         }
         return null;
     }
-
-    @Override
-    public String getId() {
-        return "Global parser";
-    }
 }

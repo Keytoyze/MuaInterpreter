@@ -37,9 +37,4 @@ public class FunctionParser implements IParser {
         }
         return localContext.getReturnValue();
     }
-
-    @Override
-    public String getId() {
-        return "Function Parser";
-    }
 }

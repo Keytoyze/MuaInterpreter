@@ -37,9 +37,4 @@ public class FirstWordParser implements IParser {
         }
         return valueMapper.apply(context, result);
     }
-
-    @Override
-    public String getId() {
-        return "First word parser";
-    }
 }
