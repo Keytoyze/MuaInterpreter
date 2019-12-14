@@ -1,21 +1,17 @@
 package src.mua.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import src.mua.Interpreter;
 import src.mua.parser.FirstWordParser;
 import src.mua.parser.IParser;
 import src.mua.parser.ListParser;
-import src.mua.parser.Parser;
 import src.mua.util.StringUtils;
 
-public class Value implements Comparable<Value> {
+public class Value implements Comparable<Value>, Serializable {
 
     public enum ValueType {WORD, NUMBER, BOOL, LIST}
 

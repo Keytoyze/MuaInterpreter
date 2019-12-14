@@ -31,7 +31,14 @@ public enum Operation {
     ISLIST(1),
     ISBOOL(1),
     ISEMPTY(1),
-
+    // TODO: word & list
+    RANDOM(1),
+    INT(1),
+    SQRT(1),
+    WAIT(1),
+    SAVE(1),
+    LOAD(1),
+    ERALL(0),
     POALL(0);
 
     public String word;

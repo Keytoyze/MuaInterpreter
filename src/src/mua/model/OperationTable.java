@@ -38,7 +38,6 @@ public interface OperationTable {
             .addOperation(Operation.AND, (context, args) -> Value.of(args[0].toBool() & args[1].toBool()))
             .addOperation(Operation.OR, (context, args) -> Value.of(args[0].toBool() | args[1].toBool()))
             .addOperation(Operation.NOT, (context, args) -> Value.of(!args[0].toBool()))
-            .add(new ArithmeticParser())
             // List operation
             .addOperation(Operation.READLIST, (context, args) -> context.inputLineAsList())
             .addVoidOperation(Operation.REPEAT, (context, args) -> {
@@ -65,7 +64,18 @@ public interface OperationTable {
             .addOperation(Operation.ISLIST, (context, args) -> Value.of(args[0].isList()))
             .addOperation(Operation.ISBOOL, (context, args) -> Value.of(args[0].isBool()))
             .addOperation(Operation.ISEMPTY, (context, args) -> Value.of(args[0].isEmpty()))
+            // arithmetic
+            .add(new ArithmeticParser())
+            // TODO word & list
+            // calculation
+            .addOperation(Operation.RANDOM, ((context, args) -> Value.of(context.random() * args[0].toNumber())))
+            .addOperation(Operation.INT, (context, args) -> Value.of(Math.floor(args[0].toNumber())))
+            .addOperation(Operation.SQRT, (context, args) -> Value.of(Math.sqrt(args[0].toNumber())))
             // other operations
+            .addVoidOperation(Operation.WAIT, (context, args) -> context.sleep(args[0].toNumber().longValue()))
+            .addVoidOperation(Operation.SAVE, (context, args) -> context.save(args[0].toString()))
+            .addVoidOperation(Operation.LOAD, (context, args) -> context.load(args[0].toString()))
+            .addVoidOperation(Operation.ERALL, (context, args) -> context.eraseAll())
             .addVoidOperation(Operation.POALL, (context, args) -> context.poAll())
             .build();
 }

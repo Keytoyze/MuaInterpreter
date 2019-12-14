@@ -1,19 +1,31 @@
 package src.mua.model;
 
+import java.io.Closeable;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import src.mua.Main;
 
-public class Context {
+@SuppressWarnings("WeakerAccess")
+public class Context implements Serializable {
 
-    private final HashMap<Value, Value> variables = new HashMap<>();
+    private HashMap<Value, Value> variables = new HashMap<>();
     private Value returnValue = Value.VOID;
     private Value backupReturnValue = Value.VOID;
-    private Context parent;
+    private transient Context parent;
+    private transient Random random = new Random();
 
     public Context(Context parent) {
         this.parent = parent;
+        variables.put(Value.of("pi"), Value.of(3.14159));
+        variables.put(Value.of("run"), Value.of("[[a] [repeat 1 :a]]"));
     }
 
     public Value get(Value key) {
@@ -67,13 +79,63 @@ public class Context {
         return returnValue != Value.VOID ? returnValue : backupReturnValue;
     }
 
-    public void poAll() {
-        System.out.println(variables.keySet());
+    public double random() {
+        return random.nextDouble();
     }
 
-    public void mergeWith(Context another) {
-        for (Map.Entry<Value, Value> entry : another.variables.entrySet()) {
-            variables.put(entry.getKey(), entry.getValue());
+    public void save(String name) {
+        FileOutputStream fos;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(name);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            close(oos);
         }
+    }
+
+    public void load(String name) {
+        FileInputStream fis;
+        ObjectInputStream ois = null;
+        try {
+            fis = new FileInputStream(name);
+            ois = new ObjectInputStream(fis);
+            Context another = (Context) ois.readObject();
+            this.variables = another.variables;
+            this.returnValue = another.returnValue;
+            this.backupReturnValue = another.backupReturnValue;
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            close(ois);
+        }
+    }
+
+    private static void close(Closeable closeable) {
+        try {
+            if (closeable != null) {
+                closeable.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException ignore) {
+        }
+    }
+
+    public void eraseAll() {
+        variables.clear();
+    }
+
+    public void poAll() {
+        System.out.println(variables.keySet());
     }
 }
