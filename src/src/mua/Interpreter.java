@@ -16,8 +16,8 @@ public class Interpreter {
 
     public static Value doInterprete(String sentence, Context context) {
         Statement statement = new Statement(sentence);
-        if (statement.isEmpty()) {
-            return Value.VOID;
+        while (statement.isEmpty()) {
+            statement.append(context.inputLine());
         }
         Value value = null;
         while (!statement.isEmpty()) {

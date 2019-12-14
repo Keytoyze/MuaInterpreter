@@ -15,7 +15,7 @@ public class Parser implements IParser {
 
     @Override
     public Value parse(Context context, Statement current) {
-        if (current.isEmpty()) {
+        while (current.isEmpty()) {
             current.append(context.inputLine());
         }
         for (IParser IParser : OperationTable.TABLE) {

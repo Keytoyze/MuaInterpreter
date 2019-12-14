@@ -3,6 +3,7 @@ package src.mua.model;
 import java.util.Collection;
 
 import src.mua.Interpreter;
+import src.mua.parser.ArithmeticParser;
 import src.mua.parser.FunctionParser;
 import src.mua.parser.IParser;
 import src.mua.parser.ListParser;
@@ -15,7 +16,7 @@ public interface OperationTable {
             // Buildin operation
             .addRegex(StringUtils.REGEX_WORD_LITERAL, (context, s) -> Value.of(s.substring(1)), true) // word
             .addRegex(StringUtils.REGEX_NAME_LITERAL, (context, s) -> context.get(Value.of(s.substring(1))), true) // name
-            .addRegex(StringUtils.REGEX_DOUBLE_START, (context, s) -> Value.of(s, Value.ValueType.NUMBER), true)
+            .addRegex(StringUtils.REGEX_DOUBLE_START, (context, s) -> Value.of(s, Value.ValueType.NUMBER), false)
             .addRegex(StringUtils.REGEX_BOOL_START, (context, s) -> Value.of(s, Value.ValueType.BOOL), true)
             .add(ListParser.INSTANCE)
             // Base operation
@@ -37,6 +38,7 @@ public interface OperationTable {
             .addOperation(Operation.AND, (context, args) -> Value.of(args[0].toBool() & args[1].toBool()))
             .addOperation(Operation.OR, (context, args) -> Value.of(args[0].toBool() | args[1].toBool()))
             .addOperation(Operation.NOT, (context, args) -> Value.of(!args[0].toBool()))
+            .add(new ArithmeticParser())
             // List operation
             .addOperation(Operation.READLIST, (context, args) -> context.inputLineAsList())
             .addVoidOperation(Operation.REPEAT, (context, args) -> {
