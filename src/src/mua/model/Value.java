@@ -41,6 +41,12 @@ public class Value implements Comparable<Value>, Serializable {
         return new Value(value, ValueType.WORD);
     }
 
+    public static Value of(List<Value> list) {
+        StringBuilder sb = new StringBuilder("[");
+        list.forEach(value -> sb.append(value.toString()).append(" "));
+        return Value.of(sb.replace(sb.length() - 1, sb.length(), "]").toString(), ValueType.LIST);
+    }
+
     public static Value of(String value, ValueType type) {
         return new Value(value, type);
     }
@@ -116,6 +122,14 @@ public class Value implements Comparable<Value>, Serializable {
 
     public Value run(Context context) {
         return Interpreter.doInterprete(toUnpackListString(), context);
+    }
+
+    public void flatIntoList(List<Value> list) {
+        if (isList()) {
+            list.addAll(toList());
+        } else {
+            list.add(this);
+        }
     }
 
     @Override

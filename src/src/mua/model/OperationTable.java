@@ -1,6 +1,9 @@
 package src.mua.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import src.mua.Interpreter;
 import src.mua.parser.ArithmeticParser;
@@ -66,7 +69,52 @@ public interface OperationTable {
             .addOperation(Operation.ISEMPTY, (context, args) -> Value.of(args[0].isEmpty()))
             // arithmetic
             .add(new ArithmeticParser())
-            // TODO word & list
+            .addOperation(Operation.WORD, (context, args) -> Value.of(args[0].toString() + args[1].toString()))
+            .addOperation(Operation.SENTENCE, (context, args) -> {
+                List<Value> list = new ArrayList<>();
+                args[0].flatIntoList(list);
+                args[1].flatIntoList(list);
+                return Value.of(list);
+            })
+            .addOperation(Operation.LIST, (context, args) -> Value.of(Arrays.asList(args[0], args[1])))
+            .addOperation(Operation.JOIN, (context, args) -> {
+                List<Value> list = args[0].toList();
+                list.add(args[1]);
+                return Value.of(list);
+            })
+            .addOperation(Operation.FIRST, (context, args) -> {
+                if (args[0].isList()) return args[0].toList().get(0);
+                else return Value.of(args[0].toString().substring(0, 1));
+            })
+            .addOperation(Operation.LAST, (context, args) -> {
+                if (args[0].isList()) {
+                    List<Value> list = args[0].toList();
+                    return list.get(list.size() - 1);
+                } else {
+                    String raw = args[0].toString();
+                    return Value.of(raw.substring(raw.length() - 1));
+                }
+            })
+            .addOperation(Operation.BUTFIRST, (context, args) -> {
+                if (args[0].isList()) {
+                    List<Value> list = args[0].toList();
+                    list.remove(0);
+                    return Value.of(list);
+                } else {
+                    String raw = args[0].toString();
+                    return Value.of(raw.substring(1));
+                }
+            })
+            .addOperation(Operation.BUTLAST, (context, args) -> {
+                if (args[0].isList()) {
+                    List<Value> list = args[0].toList();
+                    list.remove(list.size() - 1);
+                    return Value.of(list);
+                } else {
+                    String raw = args[0].toString();
+                    return Value.of(raw.substring(0, raw.length() - 1));
+                }
+            })
             // calculation
             .addOperation(Operation.RANDOM, ((context, args) -> Value.of(context.random() * args[0].toNumber())))
             .addOperation(Operation.INT, (context, args) -> Value.of(Math.floor(args[0].toNumber())))
