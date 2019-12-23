@@ -18,7 +18,7 @@ public interface OperationTable {
     Collection<IParser> TABLE = new ParserTableBuilder()
             // Buildin operation
             .addRegex(StringUtils.REGEX_WORD_LITERAL, (context, s) -> Value.of(s.substring(1)), true) // word
-            .addRegex(StringUtils.REGEX_NAME_LITERAL, (context, s) -> context.get(Value.of(s.substring(1))), true) // name
+            .addRegex(StringUtils.REGEX_NAME_LITERAL, (context, s) -> context.get(Value.of(s.substring(1))), false) // name
             .addRegex(StringUtils.REGEX_DOUBLE_START, (context, s) -> Value.of(s, Value.ValueType.NUMBER), false)
             .addRegex(StringUtils.REGEX_BOOL_START, (context, s) -> Value.of(s, Value.ValueType.BOOL), true)
             .add(ListParser.INSTANCE)
@@ -117,7 +117,7 @@ public interface OperationTable {
             })
             // calculation
             .addOperation(Operation.RANDOM, ((context, args) -> Value.of(context.random() * args[0].toNumber())))
-            .addOperation(Operation.INT, (context, args) -> Value.of(Math.floor(args[0].toNumber())))
+            .addOperation(Operation.FLOOR, (context, args) -> Value.of(Math.floor(args[0].toNumber())))
             .addOperation(Operation.SQRT, (context, args) -> Value.of(Math.sqrt(args[0].toNumber())))
             // other operations
             .addVoidOperation(Operation.WAIT, (context, args) -> context.sleep(args[0].toNumber().longValue()))

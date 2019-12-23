@@ -40,7 +40,7 @@ public enum Operation {
     BUTFIRST(1),
     BUTLAST(1),
     RANDOM(1),
-    INT(1),
+    FLOOR(1),
     SQRT(1),
     WAIT(1),
     SAVE(1),

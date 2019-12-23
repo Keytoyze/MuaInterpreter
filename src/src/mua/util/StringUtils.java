@@ -13,8 +13,9 @@ public class StringUtils {
     public static String REGEX_LIST_START = "^\\[[\\s\\S]*\\]";
     public static String REGEX_FUNCTION = "\\[\\s*\\[(.+)\\]\\s*\\[(.+)\\]\\s*\\]";
     public static String REGEX_BOOL_START = "^(true)|(false)+";
-    public static String REGEX_WORD_LITERAL = "\\" + Operation.QUOTATION.word + ".+";
-    public static String REGEX_NAME_LITERAL = "\\" + Operation.COLON.word + ".+";
+    private static String REGEX_NAME = "[a-zA-Z][a-zA-Z0-9_]*";
+    public static String REGEX_WORD_LITERAL = "^\\" + Operation.QUOTATION.word + ".+";
+    public static String REGEX_NAME_LITERAL = "^\\" + Operation.COLON.word + REGEX_NAME;
 
     private StringUtils() {
     }
@@ -36,7 +37,10 @@ public class StringUtils {
         for (Value v : valueList) {
             sb.append(v).append(" ");
         }
-        return sb.replace(sb.length() - 1, sb.length(), "]").toString();
+        if (sb.charAt(sb.length() - 1) == ' ') {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.append("]").toString();
 
     }
 }

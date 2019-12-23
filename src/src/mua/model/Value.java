@@ -16,7 +16,6 @@ public class Value implements Comparable<Value>, Serializable {
     public enum ValueType {WORD, NUMBER, BOOL, LIST}
 
     public static final Value VOID = new Value("", ValueType.WORD);
-    public static final BiFunction<Context, String, Value> CONTEXT_STRING_MAPPER = (context, s) -> Value.of(s);
 
     private String raw;
     private ValueType type;
@@ -42,9 +41,7 @@ public class Value implements Comparable<Value>, Serializable {
     }
 
     public static Value of(List<Value> list) {
-        StringBuilder sb = new StringBuilder("[");
-        list.forEach(value -> sb.append(value.toString()).append(" "));
-        return Value.of(sb.replace(sb.length() - 1, sb.length(), "]").toString(), ValueType.LIST);
+        return Value.of(StringUtils.listToString(list), ValueType.LIST);
     }
 
     public static Value of(String value, ValueType type) {
