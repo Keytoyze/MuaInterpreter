@@ -25,7 +25,7 @@ public class Context implements Serializable {
     public Context(Context parent) {
         this.parent = parent;
         variables.put(Value.of("pi"), Value.of(3.14159));
-        variables.put(Value.of("run"), Value.of("[[a] [repeat 1 :a]]"));
+        variables.put(Value.of("run"), Value.of("[[a] [repeat 1 :a]]", Value.ValueType.LIST));
     }
 
     public Value get(Value key) {
@@ -87,10 +87,10 @@ public class Context implements Serializable {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(name);
-
             for (Map.Entry<Value, Value> entry : variables.entrySet()) {
-                fos.write(("make \"" + entry.getKey() + " " + entry.getValue() + "\n").getBytes());
+                fos.write(("make \"" + entry.getKey() + " " + entry.getValue().toRawString() + "\n").getBytes());
             }
+            fos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

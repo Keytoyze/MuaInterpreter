@@ -17,14 +17,30 @@ public class Value implements Comparable<Value>, Serializable {
 
     public static final Value VOID = new Value("", ValueType.WORD);
 
-    private String raw;
-    private ValueType type;
+    private final String raw;
+    private final ValueType type;
+    private final List<Value> list = new ArrayList<>(); // valid only when type == LIST
 
     private Value(String raw, ValueType type) {
-        this.raw = raw.trim();
+
         this.type = type;
-        if (isList()) {
-            this.raw = StringUtils.listToString(toList());
+        this.raw = raw.trim();
+
+        if (type == ValueType.LIST) {
+            Statement s = new Statement(raw.substring(1, raw.length() - 1));
+            IParser firstWordParser = new FirstWordParser(), listParser = ListParser.INSTANCE;
+            while (true) {
+                Value value = listParser.parse(null, s);
+                if (value == null) {
+                    // Parse first word
+                    value = firstWordParser.parse(null, s);
+                    if (value == null) {
+                        // end
+                        break;
+                    }
+                }
+                list.add(value);
+            }
         }
     }
 
@@ -50,6 +66,21 @@ public class Value implements Comparable<Value>, Serializable {
 
     @Override
     public String toString() {
+        if (type == ValueType.LIST) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < list.size(); i++) {
+                stringBuilder.append(list.get(i).raw);
+                if (i != list.size() - 1) {
+                    stringBuilder.append(" ");
+                }
+            }
+            return stringBuilder.toString();
+        } else {
+            return raw;
+        }
+    }
+
+    public String toRawString() {
         return raw;
     }
 
@@ -57,45 +88,24 @@ public class Value implements Comparable<Value>, Serializable {
         return Double.valueOf(raw);
     }
 
-    public String toUnpackListString() {
-        if (isList()) {
-            return raw.substring(1, raw.length() - 1);
-        }
-        throw new IllegalStateException(raw + " is not a list!");
-    }
-
     public boolean isNumber() {
-        return StringUtils.test(StringUtils.REGEX_DOUBLE_START, raw);
+        return type == ValueType.NUMBER;
     }
 
     public boolean isWord() {
-        return !isList();
+        return type == ValueType.WORD;
     }
 
     public List<Value> toList() {
-        Statement s = new Statement(toUnpackListString());
-        List<Value> result = new ArrayList<>();
-        IParser firstWordParser = new FirstWordParser(), listParser = ListParser.INSTANCE;
-        while (true) {
-            Value value = listParser.parse(null, s);
-            if (value == null) {
-                // Parse first word
-                value = firstWordParser.parse(null, s);
-                if (value == null) {
-                    // end
-                    return result;
-                }
-            }
-            result.add(value);
-        }
+        return new ArrayList<>(list);
     }
 
     public boolean isList() {
-        return StringUtils.test(StringUtils.REGEX_LIST_START, raw);
+        return type == ValueType.LIST;
     }
 
     public boolean isFunction() {
-        return StringUtils.test(StringUtils.REGEX_FUNCTION, raw);
+        return isList();
     }
 
     public Boolean toBool() {
@@ -106,24 +116,24 @@ public class Value implements Comparable<Value>, Serializable {
     }
 
     public boolean isBool() {
-        return StringUtils.test(StringUtils.REGEX_BOOL_START, raw);
+        return type == ValueType.BOOL;
     }
 
     public boolean isEmpty() {
         if (isList()) {
-            return toList().size() == 0;
+            return this.list.size() == 0;
         } else {
             return raw.isEmpty();
         }
     }
 
     public Value run(Context context) {
-        return Interpreter.doInterprete(toUnpackListString(), context);
+        return Interpreter.doInterprete(toString(), context);
     }
 
     public void flatIntoList(List<Value> list) {
         if (isList()) {
-            list.addAll(toList());
+            list.addAll(this.list);
         } else {
             list.add(this);
         }

@@ -10,8 +10,6 @@ import src.mua.model.Value;
 public class StringUtils {
 
     public static String REGEX_DOUBLE_START = "^-?[0-9]+(\\.[0-9]+)?";
-    public static String REGEX_LIST_START = "^\\[[\\s\\S]*\\]";
-    public static String REGEX_FUNCTION = "\\[\\s*\\[(.+)\\]\\s*\\[(.+)\\]\\s*\\]";
     public static String REGEX_BOOL_START = "^(true)|(false)+";
     private static String REGEX_NAME = "[a-zA-Z][a-zA-Z0-9_]*";
     public static String REGEX_WORD_LITERAL = "^\\" + Operation.QUOTATION.word + ".+";
@@ -35,7 +33,7 @@ public class StringUtils {
     public static String listToString(List<Value> valueList) {
         StringBuilder sb = new StringBuilder("[");
         for (Value v : valueList) {
-            sb.append(v).append(" ");
+            sb.append(v.toRawString()).append(" ");
         }
         if (sb.charAt(sb.length() - 1) == ' ') {
             sb.deleteCharAt(sb.length() - 1);
