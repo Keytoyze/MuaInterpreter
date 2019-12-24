@@ -1,15 +1,16 @@
 package src.mua.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+import src.mua.Interpreter;
 import src.mua.Main;
 
 @SuppressWarnings("WeakerAccess")
@@ -83,33 +84,38 @@ public class Context implements Serializable {
     }
 
     public void save(String name) {
-        FileOutputStream fos;
-        ObjectOutputStream oos = null;
+        FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(name);
-            oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
+
+            for (Map.Entry<Value, Value> entry : variables.entrySet()) {
+                fos.write(("make \"" + entry.getKey() + " " + entry.getValue() + "\n").getBytes());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            close(oos);
+            close(fos);
         }
     }
 
     public void load(String name) {
-        FileInputStream fis;
-        ObjectInputStream ois = null;
+        FileInputStream input = null;
+        ByteArrayOutputStream output = null;
         try {
-            fis = new FileInputStream(name);
-            ois = new ObjectInputStream(fis);
-            Context another = (Context) ois.readObject();
-            this.variables = another.variables;
-            this.returnValue = another.returnValue;
-            this.backupReturnValue = another.backupReturnValue;
-        } catch (IOException | ClassNotFoundException e) {
+            input = new FileInputStream(name);
+            output = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int n;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+            }
+            Interpreter.doInterprete(new String(output.toByteArray()));
+
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            close(ois);
+            close(input);
+            close(output);
         }
     }
 
